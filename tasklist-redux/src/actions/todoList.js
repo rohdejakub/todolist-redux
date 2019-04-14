@@ -34,10 +34,20 @@ const addTodo = () => (dispatch,getState) => {
   })
 };
 
-export const deleteTodo = (id) => ({
-    type: DELETE_TODO,
-    id
-  });
+export const deleteTodo = (id) => (dispatch) => {
+    return localForage.getItem('todos').then(todos => {
+      if(todos) {
+        const filteredTodos = todos.filter(todo => todo.id !== id)
+  
+        localForage.setItem('todos', filteredTodos).then(() => {
+          dispatch({
+            type: DELETE_TODO,
+            id
+          })
+        })
+      }
+    })
+  }
 
   export const changeTodoStatus = (id) => ({
     type: CHANGE_TODO_STATUS,
